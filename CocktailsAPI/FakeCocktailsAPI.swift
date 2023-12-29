@@ -53,7 +53,6 @@ class FakeCocktailsAPI: CocktailsAPI {
             failure = count - 1 == 0 ? .never : .count(count - 1)
             queue.async {
                 sleep(3)
-//                let error = CocktailsAPIError.unavailable
                 completion(false, nil, .unavailable)
             }
             return
@@ -70,22 +69,5 @@ class FakeCocktailsAPI: CocktailsAPI {
         }
     }
     
-    /*
-     original
-    func fetchCocktails(_ handler: @escaping (Result<Data, CocktailsAPIError>) -> Void) {
-        if case let .count(count) = failure {
-            failure = count - 1 == 0 ? .never : .count(count - 1)
-            queue.async {
-                sleep(3)
-                handler(.failure(.unavailable))
-            }
-            return
-        }
-        let data = jsonData
-        queue.async {
-            sleep(3)
-            handler(.success(data))
-        }
-    }
-     */
+    
 }

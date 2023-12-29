@@ -68,7 +68,6 @@ class CocktailsViewModel: NSObject {
     func fetchData(cocktails: Cocktails) {
         let sortedAlphabetically = consideringfavourites(cocktails: cocktails).sorted { $0.name < $1.name }
         let sortingFavouritesTotop = sortedAlphabetically.sorted {($0.favourite ?? false && !($1.favourite ?? false))}
-        //        print("this is the sorted array \(sortedAlphabetically)")
         var cellViewModels = [CocktailCellViewModel]()
         var detailViewModels = [CocktailDetailsViewModel]()
         for cocktail in sortingFavouritesTotop {
