@@ -12,16 +12,12 @@ class CocktailViewController: UIViewController {
     @IBOutlet weak var filterSegment: UISegmentedControl!
     @IBOutlet weak var tableView: UITableView!
     let loadingViewController = LoadingViewController()
-
-//    lazy var viewModel: CocktailsViewModel = {
-//        CocktailsViewModel()
-//    }
-    var viewModel = CocktailsViewModel()
+    let retryViewController = RetryViewController()
+    var viewModel = CocktailsViewModel(cocktailService: FakeCocktailsAPI(withFailure: .count(3)))
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
         initView()
         initViewModel()
         add(loadingViewController)
@@ -45,23 +41,45 @@ class CocktailViewController: UIViewController {
         tableView.separatorStyle = .singleLine
         tableView.tableFooterView = UIView()
         tableView.register(CocktailCell.nib, forCellReuseIdentifier: CocktailCell.identifier)
-        
     }
     
     func initViewModel(){
         viewModel.getCocktails()
-        viewModel.reloadTableView = { [weak self] in
+        viewModel.reloadTableView = { [weak self] success, error in
             DispatchQueue.main.async {
-                self?.loadingViewController.remove()
-                self?.tableView.reloadData()
-                self?.view.layoutIfNeeded()
-                
-                if (self?.filterSegment.isUserInteractionEnabled == false){
-                    self?.filterSegment.isUserInteractionEnabled = true
+                if(success){
+                    self?.showViewsWithData()
+                }
+                else{
+                    self?.showErrorMessage()
                 }
             }
         }
     }
+    
+    func showViewsWithData(){
+        self.loadingViewController.remove()
+        self.tableView.isHidden = false
+        self.tableView.reloadData()
+        self.view.layoutIfNeeded()
+        
+        if (self.filterSegment.isUserInteractionEnabled == false){
+            self.filterSegment.isUserInteractionEnabled = true
+        }
+    }
+    func showErrorMessage(){
+        
+        self.loadingViewController.remove()
+        add(retryViewController)
+        retryViewController.reloadButtonClicked = {[weak self] btn in
+            if let loadingView = self?.loadingViewController{
+                self?.add(loadingView)
+            }
+            self?.retryViewController.remove()
+            self?.viewModel.getCocktails()
+        }
+    }
+
     
     @IBAction func filterCocktails(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
@@ -76,7 +94,6 @@ class CocktailViewController: UIViewController {
     
     func showDetailsPage(cocktailDetailViewModel: CocktailDetailsViewModel){
         let detailsPage = DetailViewController(viewModel: cocktailDetailViewModel)
-//        detailsPage.viewModel = cocktailDetailViewModel
         detailsPage.title = cocktailDetailViewModel.name
         detailsPage.backButtonTap = { [weak self] identifier, isFav in
             if let loadingVC = self?.loadingViewController{

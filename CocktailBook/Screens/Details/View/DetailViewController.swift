@@ -26,11 +26,9 @@ class DetailViewController: UIViewController {
         // Do any additional setup after loading the view.
         
     }
-    init(viewModel: CocktailDetailsViewModel){
-        self.viewModel = viewModel
+    init(viewModel: CocktailDetailsViewModelProtocol){
+        self.viewModel = viewModel as? CocktailDetailsViewModel
         super.init(nibName: nil, bundle: nil)
-        
-        
     }
     
     required init?(coder: NSCoder) {
@@ -56,22 +54,26 @@ class DetailViewController: UIViewController {
     
     func initViewModel(){
         guard let viewModel = viewModel else { return }
-        prepTimeLabel.text = viewModel.preparationTime
+        if #available(iOS 15, *) {
+            prepTimeLabel.text = String(localized: "\(viewModel.preparationTime) minutes")
+        } else {
+            prepTimeLabel.text = NSLocalizedString("\(viewModel.preparationTime) minutes", comment: "")
+        } 
         setFavouriteButtonImage(isFavourite: viewModel.favourite)
         cocktailImageView.image = UIImage(named: viewModel.imageName)
         longDescriptionLabel.text = viewModel.longDescription
     }
     func setFavouriteButtonImage(isFavourite: Bool){
         if isFavourite{
-            navigationItem.rightBarButtonItem?.image = UIImage(systemName: "heart.fill")
+            navigationItem.rightBarButtonItem?.image = UserReaction().favourite
         }
         else{
-            navigationItem.rightBarButtonItem?.image = UIImage(systemName: "heart")
+            navigationItem.rightBarButtonItem?.image = UserReaction().not_favourite
         }
     }
     func setupNavigationBar(){
-        navigationController?.navigationItem.backButtonTitle = "All Cocktails"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(didTapFavouritesButton))
+        navigationController?.navigationItem.backButtonTitle = NSLocalizedString("All Cocktails", comment: "")
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UserReaction().not_favourite, style: .plain, target: self, action: #selector(didTapFavouritesButton))
     }
     
     @objc public func didTapFavouritesButton() {

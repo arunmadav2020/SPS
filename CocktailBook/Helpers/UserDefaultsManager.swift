@@ -7,7 +7,9 @@
 
 import Foundation
 
-struct UserDefaultsManager {
+
+
+struct UserDefaultsManager: UserDefaultsProtocol {
     static var shared = UserDefaultsManager()
     
     func saveInUserDefaults<T>(data :T, key :String)->Bool where T: Codable{

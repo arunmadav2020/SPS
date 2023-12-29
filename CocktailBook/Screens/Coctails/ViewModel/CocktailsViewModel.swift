@@ -9,15 +9,16 @@ import Foundation
 
 let favouritesKey = "favourites"
 
+
 class CocktailsViewModel: NSObject {
     
     private var cocktailService: CocktailsAPI
-    var reloadTableView: (() -> Void)?
+    var reloadTableView: ((Bool, CocktailsAPIError?) -> Void)?
     var cocktails = Cocktails()
     var type: CocktailType?
-    
-    private var favourites:[String] {
-        if let currentFavourites = UserDefaultsManager().retrieveFromUserDefaults(dataType: [String].self, key: favouritesKey){
+    var userDefaultsManager: UserDefaultsProtocol = UserDefaultsManager()
+    var favourites:[String] {
+        if let currentFavourites = userDefaultsManager.retrieveFromUserDefaults(dataType: [String].self, key: favouritesKey){
             return currentFavourites
         }
         return []
@@ -25,27 +26,34 @@ class CocktailsViewModel: NSObject {
     
     var cocktailCellViewModels = [CocktailCellViewModel](){
         didSet{
-            reloadTableView?()
+            reloadTableView?(true, nil)
         }
     }
     
     var cocktailDetailsViewModels = [CocktailDetailsViewModel]()
     
-    init(cocktailService: CocktailsAPI = FakeCocktailsAPI()) {
+    init(cocktailService: CocktailsAPI) {
         self.cocktailService = cocktailService
+        super.init()
     }
     
     func getCocktails() {
-        cocktailService.fetchCocktails { success, model, error in
-            if success, let cocktails = model {
-                self.cocktails = cocktails
-                self.fetchData(cocktails: cocktails)
+        
+        cocktailService.fetchCocktails { [weak self] success, results, error in
+            if success, let cocktails = results {
+                self?.cocktails = cocktails
+                self?.fetchData(cocktails: cocktails)
             } else {
-                print(error!)
+                switch error {
+                case .unavailable:
+                    self?.reloadTableView?(false, .unavailable)
+                case .none:
+                    self?.reloadTableView?(false, .unavailable)
+                }
             }
         }
     }
-    func consideringfavourites(cocktails: Cocktails)->Cocktails{
+    private func consideringfavourites(cocktails: Cocktails)->Cocktails{
         let cocktailsIncludingFavourite = cocktails.map {
             if(favourites.contains($0.id)){
                 var favouriteCocktail = $0
@@ -58,14 +66,12 @@ class CocktailsViewModel: NSObject {
     }
     
     func fetchData(cocktails: Cocktails) {
-        
-        let inclusiveOfFavourites = consideringfavourites(cocktails: cocktails).sorted { $0.name < $1.name }
-        let sortedAlphabetically = inclusiveOfFavourites.sorted {($0.favourite ?? false && !($1.favourite ?? false))}
-//        print("this is the sorted array \(sortedAlphabetically)")
-        
+        let sortedAlphabetically = consideringfavourites(cocktails: cocktails).sorted { $0.name < $1.name }
+        let sortingFavouritesTotop = sortedAlphabetically.sorted {($0.favourite ?? false && !($1.favourite ?? false))}
+        //        print("this is the sorted array \(sortedAlphabetically)")
         var cellViewModels = [CocktailCellViewModel]()
         var detailViewModels = [CocktailDetailsViewModel]()
-        for cocktail in sortedAlphabetically {
+        for cocktail in sortingFavouritesTotop {
             cellViewModels.append(createCellModel(cocktail: cocktail))
             detailViewModels.append(createDetailModel(cocktail: cocktail))
         }
@@ -85,7 +91,7 @@ class CocktailsViewModel: NSObject {
             }
         }
     }
-        
+    
     func createCellModel(cocktail: Cocktail) -> CocktailCellViewModel {
         let name = cocktail.name
         let shortDescription = cocktail.shortDescription
@@ -95,12 +101,15 @@ class CocktailsViewModel: NSObject {
         }
         return CocktailCellViewModel(name: name, shortDescription: shortDescription, favourite: favourite)
     }
+    func getCellViewModel(at indexPath: IndexPath) -> CocktailCellViewModel {
+        return cocktailCellViewModels[indexPath.row]
+    }
     
     func createDetailModel(cocktail: Cocktail) -> CocktailDetailsViewModel {
-    
+        
         let identifier = cocktail.id
         let name = cocktail.name
-        let prepTime = "\(cocktail.preparationMinutes) minutes"
+        let prepTime = cocktail.preparationMinutes
         let longDescription = cocktail.longDescription
         let imageName = cocktail.imageName
         let ingredients = cocktail.ingredients
@@ -111,21 +120,17 @@ class CocktailsViewModel: NSObject {
         }
         return CocktailDetailsViewModel(identifier: identifier, name: name, preparationTime: prepTime, imageName: imageName, longDescription: longDescription, favourite: favourite, ingredients: ingredients)
     }
-    
-    func getCellViewModel(at indexPath: IndexPath) -> CocktailCellViewModel {
-            return cocktailCellViewModels[indexPath.row]
-        }
-    
     func getDetDetailViewModel(at indexPath: IndexPath) -> CocktailDetailsViewModel {
         return cocktailDetailsViewModels[indexPath.row]
     }
     
+
     func addToFavourites(identifier: String){
         
         var newFavourites = self.favourites.map{$0}
         if(!newFavourites.contains(identifier)){
             newFavourites.append(identifier)
-            if (UserDefaultsManager().saveInUserDefaults(data: newFavourites, key: favouritesKey)){
+            if (userDefaultsManager.saveInUserDefaults(data: newFavourites, key: favouritesKey)){
                 filterByType(type: type)
             }
         }
@@ -134,7 +139,7 @@ class CocktailsViewModel: NSObject {
     func removeFromFavourites(identifier: String){
         var newFavourites = self.favourites.map{$0}
         newFavourites.removeAll(where: { $0 == identifier })
-        if (UserDefaultsManager().saveInUserDefaults(data: newFavourites, key: favouritesKey)){
+        if (userDefaultsManager.saveInUserDefaults(data: newFavourites, key: favouritesKey)){
             filterByType(type: type)
         }
     }

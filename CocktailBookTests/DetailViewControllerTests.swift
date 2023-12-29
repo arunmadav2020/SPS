@@ -8,17 +8,26 @@
 import XCTest
 @testable import CocktailBook
 
+
+
 final class DetailViewControllerTests: XCTestCase {
 
     var sut: DetailViewController?
+    var viewModel = DummyDetailViewModel()
     
     override func setUp() {
         super.setUp()
-        sut = DetailViewController()
-    }
-   
-    func test_outlets_shouldBeConnected() {
+        sut = DetailViewController(viewModel: viewModel)
+        _ = UINavigationController(rootViewController: sut!)
         sut?.loadViewIfNeeded()
+    }
+    
+    func test_tappingFavouriteButton(){
+        XCTAssertNotNil(sut?.navigationController?.navigationBar.topItem?.rightBarButtonItem)
+        tapBarButton((sut?.navigationController?.navigationBar.topItem?.rightBarButtonItem)!)
+    }
+    
+    func test_outlets_shouldBeConnected() {
         XCTAssertNotNil(sut?.prepTimeLabel, "prepTimeLabel")
         XCTAssertNotNil(sut?.cocktailImageView, "cocktailImageView")
         XCTAssertNotNil(sut?.longDescriptionLabel, "longDescriptionLabel")
@@ -29,5 +38,7 @@ final class DetailViewControllerTests: XCTestCase {
         sut = nil
         super.tearDown()
     }
+    
+    
 
 }

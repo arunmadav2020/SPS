@@ -1,0 +1,42 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "SaQ-g5-q3b.segmentTitles[0]" : {
+      "comment" : "Class = \"UISegmentedControl\"; SaQ-g5-q3b.segmentTitles[0] = \"All\"; ObjectID = \"SaQ-g5-q3b\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "All"
+          }
+        }
+      }
+    },
+    "SaQ-g5-q3b.segmentTitles[1]" : {
+      "comment" : "Class = \"UISegmentedControl\"; SaQ-g5-q3b.segmentTitles[1] = \"Alcoholic\"; ObjectID = \"SaQ-g5-q3b\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Alcoholic"
+          }
+        }
+      }
+    },
+    "SaQ-g5-q3b.segmentTitles[2]" : {
+      "comment" : "Class = \"UISegmentedControl\"; SaQ-g5-q3b.segmentTitles[2] = \"Non-Alcoholic\"; ObjectID = \"SaQ-g5-q3b\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Non-Alcoholic"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

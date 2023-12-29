@@ -7,10 +7,14 @@
 
 import Foundation
 
-struct CocktailDetailsViewModel {
+protocol CocktailDetailsViewModelProtocol{
+    func getCellViewModel(at indexPath: IndexPath) -> IngredientsCellViewModel?
+}
+
+struct CocktailDetailsViewModel: CocktailDetailsViewModelProtocol {
     var identifier: String
     var name: String
-    var preparationTime: String
+    var preparationTime: Int
     var imageName: String
     var longDescription: String
     var favourite: Bool = false

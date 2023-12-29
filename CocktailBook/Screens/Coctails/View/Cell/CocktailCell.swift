@@ -21,14 +21,12 @@ class CocktailCell: UITableViewCell {
         didSet {
             nameLabel.text = cellViewModel?.name
             shortDescriptionLabel.text = cellViewModel?.shortDescription
-//            print("this is favourite flag \(cellViewModel?.name)\(cellViewModel?.favourite)")
             setupColorChangeForFavourites(favourite: cellViewModel?.favourite ?? false)
         }
     }
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
     
     func setupColorChangeForFavourites(favourite: Bool){

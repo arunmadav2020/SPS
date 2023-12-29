@@ -1,5 +1,40 @@
 {
   "sourceLanguage" : "en",
-  "strings" : {},
+  "strings" : {
+    "(viewModel.preparationTime) minutes" : {
+
+    },
+    "%lld minutes" : {
+      "comment" : "preparation time",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld minute"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld minutes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "All Cocktails" : {
+      "extractionState" : "manual"
+    },
+    "Ingredients" : {
+      "comment" : "show ingredients",
+      "extractionState" : "manual"
+    }
+  },
   "version" : "1.0"
 }

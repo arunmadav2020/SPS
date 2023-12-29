@@ -1,0 +1,42 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "axB-pH-OF8.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Sorry, an error occurred while getting data from the server.\"; ObjectID = \"axB-pH-OF8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sorry, an error occurred while getting data from the server."
+          }
+        }
+      }
+    },
+    "Wdw-YV-bXs.configuration.title" : {
+      "comment" : "Class = \"UIButton\"; configuration.title = \"Reload\"; ObjectID = \"Wdw-YV-bXs\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reload"
+          }
+        }
+      }
+    },
+    "Wdw-YV-bXs.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"Button\"; ObjectID = \"Wdw-YV-bXs\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Button"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

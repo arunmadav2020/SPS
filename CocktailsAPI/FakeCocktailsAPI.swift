@@ -3,6 +3,8 @@ import Combine
 
 class FakeCocktailsAPI: CocktailsAPI {
     
+    
+    
     enum CocktailAPIFailure {
         case never
         case count(UInt)
@@ -44,14 +46,15 @@ class FakeCocktailsAPI: CocktailsAPI {
         .eraseToAnyPublisher()
     }
     
-    func fetchCocktails(_ completion: @escaping (_ success: Bool, _ results: Cocktails?, _ error: String?) -> Void) {
+    func fetchCocktails(_ completion: @escaping (Bool, Cocktails?, CocktailsAPIError?) -> Void) {
+
         let error = CocktailsAPIError.unavailable
         if case let .count(count) = failure {
             failure = count - 1 == 0 ? .never : .count(count - 1)
             queue.async {
                 sleep(3)
 //                let error = CocktailsAPIError.unavailable
-                completion(false, nil, error.localizedDescription)
+                completion(false, nil, .unavailable)
             }
             return
         }
@@ -62,7 +65,7 @@ class FakeCocktailsAPI: CocktailsAPI {
                 let model = try JSONDecoder().decode(Cocktails.self, from: data)
                 completion(true, model, nil)
             } catch {
-                completion(false, nil, error.localizedDescription)
+                completion(false, nil, .unavailable)
             }
         }
     }
